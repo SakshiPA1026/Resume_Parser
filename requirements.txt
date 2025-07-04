@@ -1,11 +1,8 @@
 Flask==3.0.3
-spacy==3.4.0 # Changed spaCy version for better compatibility
+spacy==3.7.4
 python-docx==1.1.0
 pdfminer.six==20221105
 PyMuPDF==1.23.22
 pandas==2.2.2
 gunicorn==22.0.0
-firebase-admin==6.9.0
-nltk==3.8.1
-reportlab==4.0.0
-
+firebase-admin==6.4.2
