@@ -1,0 +1,28 @@
+# Python virtual environment
+venv/
+.venv/
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Operating System files
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Flask specific
+instance/
+.flaskenv
+
+# Uploads folder (where temporary resume files are saved)
+uploads/
+
+# Database file (SQLite - if you were still using it, but good to keep for general Python)
+*.db
+
+# Firebase service account key (VERY IMPORTANT - replace with your actual filename pattern)
+# This ensures your private key is NEVER uploaded to GitHub.
+E:\resume-parser-917f8-firebase-adminsdk-fbsvc-4ab4960cfc.json

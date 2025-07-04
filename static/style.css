@@ -1,0 +1,46 @@
+/* Custom CSS for background and font */
+body {
+    background-color: #1a202c; /* A dark background color */
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    margin: 0;
+}
+
+/* Ensure the main container scales properly */
+.min-h-screen {
+    min-height: 100vh;
+}
+
+/* Custom gradient for the main card */
+.bg-gradient-to-br {
+    background-image: linear-gradient(to bottom right, #1e3a8a, #0f172a); /* Darker blue to very dark blue */
+}
+
+/* Custom shadow for buttons */
+button {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Specific styling for the file input label to make it look like a button */
+input[type="file"] {
+    display: none; /* Hide the default file input */
+}
+
+/* Add some basic responsiveness for smaller screens */
+@media (max-width: 768px) {
+    .text-5xl {
+        font-size: 3rem; /* Adjust font size for smaller screens */
+    }
+    .text-lg {
+        font-size: 1rem;
+    }
+    .p-12 {
+        padding: 2rem; /* Adjust padding for smaller screens */
+    }
+    .flex-row {
+        flex-direction: column; /* Stack elements vertically on small screens */
+    }
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Data</title>
+    <!-- Cache Control Meta Tags -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        .download-button {
+            background-color: #10b981; /* Emerald green */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .download-button:hover {
+            background-color: #059669; /* Darker green */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 md:p-10 rounded-2xl shadow-xl w-full max-w-3xl">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6 text-center">
+            {% if db_save_status == "view_mode" %}
+                Resume Details
+            {% else %}
+                Resume Data Submitted!
+            {% endif %}
+        </h1>
+        <p class="text-gray-600 mb-8 text-center">Here's the data that was processed:</p>
+
+        {% if db_save_status == "success" %}
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+                <strong class="font-bold">Success!</strong>
+                <span class="block sm:inline">Data saved to database.</span>
+            </div>
+        {% endif %}
+
+        <div class="space-y-4 text-gray-700">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold mb-2">Personal Details</h2>
+                <p><strong>Name:</strong> {{ data.name }}</p>
+                <p><strong>Email:</strong> {{ data.email }}</p>
+                <p><strong>Phone:</strong> {{ data.phone }}</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold mb-2">Skills</h2>
+                <p>{{ data.skills | join(', ') }}</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold mb-2">Education</h2>
+                {% if data.education %}
+                    {% for edu in data.education %}
+                        <div class="mb-2 p-2 border-b border-gray-200 last:border-b-0">
+                            <p><strong>Institution:</strong> {{ edu.institution }}</p>
+                            <p><strong>Degree:</strong> {{ edu.degree }}</p>
+                            <p><strong>Passing Year:</strong> {{ edu.passing_year }}</p>
+                            <p><strong>Marks/Percentage/CGPA:</strong> {{ edu.marks_percentage_cgpa }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No education details provided.</p>
+                {% endif %}
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold mb-2">Work Experience</h2>
+                {% if data.work_experience %}
+                    {% for exp in data.work_experience %}
+                        <div class="mb-2 p-2 border-b border-gray-200 last:border-b-0">
+                            <p><strong>Company:</strong> {{ exp.company }}</p>
+                            <p><strong>Title:</strong> {{ exp.title }}</p>
+                            <p><strong>Dates:</strong> {{ exp.dates }}</p>
+                            <p><strong>Description:</strong> {{ exp.description }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No work experience details provided.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="text-center mt-8 space-x-4">
+            {% if data.id %} {# Only show download buttons if resume has an ID (i.e., saved in DB) #}
+                <a href="{{ url_for('download_resume', resume_id=data.id, file_type='pdf') }}" class="download-button inline-block">
+                    Download PDF
+                </a>
+                <a href="{{ url_for('download_resume', resume_id=data.id, file_type='docx') }}" class="download-button inline-block">
+                    Download DOCX
+                </a>
+            {% endif %}
+            <a href="{{ url_for('view_resumes') }}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1">
+                Back to Saved Resumes
+            </a>
+        </div>
+    </div>
+</body>
+</html>
