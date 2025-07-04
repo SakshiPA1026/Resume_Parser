@@ -4,45 +4,34 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 # --- Firestore Initialization ---
-# For local development:
-# Ensure you have a service account key file.
-# Set the GOOGLE_APPLICATION_CREDENTIALS environment variable to the path of your JSON key file.
-# Example: os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/path/to/your/serviceAccountKey.json"
+# This part handles Firebase initialization.
+# It first tries to use Application Default Credentials (standard for Google Cloud environments).
+# If that fails (e.g., in local development without GOOGLE_APPLICATION_CREDENTIALS set),
+# it falls back to looking for a JSON string in the FIREBASE_CREDENTIALS_JSON environment variable.
 
-# For Render deployment:
-# You can set GOOGLE_APPLICATION_CREDENTIALS as an environment variable pointing
-# to a base64 encoded version of your service account key, or directly paste
-# the JSON content into an environment variable and load it.
-# A simpler approach for Render is to put the JSON content into a single environment variable
-# like FIREBASE_CREDENTIALS_JSON and load it as a string.
-
-# Check if Firebase has already been initialized
 if not firebase_admin._apps:
     try:
         # Attempt to load credentials from GOOGLE_APPLICATION_CREDENTIALS environment variable
-        # This is the standard way for Google Cloud services
+        # This is the standard way for Google Cloud services or local setup
         cred = credentials.ApplicationDefault()
         firebase_admin.initialize_app(cred)
         print("Firebase Admin SDK initialized using Application Default Credentials.")
     except Exception as e:
         print(f"Warning: Could not initialize Firebase with Application Default Credentials: {e}")
-        # Fallback for local development if GOOGLE_APPLICATION_CREDENTIALS is not set
-        # or for Render if using a direct JSON string env var
+        # Fallback for local development or Render if using a direct JSON string env var
         try:
-            # Look for a direct JSON string in an environment variable (e.g., for Render)
             firebase_credentials_json = os.environ.get('FIREBASE_CREDENTIALS_JSON')
             if firebase_credentials_json:
+                # Load credentials from the environment variable (JSON string)
                 cred = credentials.Certificate(json.loads(firebase_credentials_json))
                 firebase_admin.initialize_app(cred)
-                print("Firebase Admin SDK initialized using FIREBASE_CREDENTIALS_JSON.")
+                print("Firebase Admin SDK initialized using FIREBASE_CREDENTIALS_JSON environment variable.")
             else:
-                print("Error: FIREBASE_CREDENTIALS_JSON environment variable not found.")
-                raise Exception("Firebase credentials not found. Please set GOOGLE_APPLICATION_CREDENTIALS or FIREBASE_CREDENTIALS_JSON.")
+                # If neither method works, raise an error
+                raise Exception("Firebase credentials not found. Please set GOOGLE_APPLICATION_CREDENTIALS or FIREBASE_CREDENTIALS_JSON environment variable.")
         except Exception as e_fallback:
             print(f"Error: Failed to initialize Firebase Admin SDK: {e_fallback}")
             print("Please ensure your Firebase service account key is correctly configured.")
-            # In a real app, you might want to exit or handle this more gracefully
-            # For this demo, we'll let it fail if credentials aren't found.
             raise e_fallback # Re-raise the exception to stop the app if init fails
 
 db = firestore.client()
@@ -73,7 +62,7 @@ def insert_resume_data(data, original_filename=None):
             'education': data.get('education', []),
             'work_experience': data.get('work_experience', []),
             'original_filename': original_filename,
-            'timestamp': firestore.SERVER_TIMESTAMP # Add a server timestamp
+            'timestamp': firestore.SERVER_TIMESTAMP # Add a server timestamp for ordering
         }
         
         doc_ref.set(resume_doc)
@@ -85,13 +74,14 @@ def insert_resume_data(data, original_filename=None):
 
 def get_all_resumes():
     """
-    Fetches all resume data from Firestore.
+    Fetches all resume data from Firestore, ordered by timestamp.
     Returns:
         list: A list of dictionaries, each representing a resume.
     """
     try:
         resumes_ref = db.collection('resumes')
-        docs = resumes_ref.order_by('timestamp', direction=firestore.Query.DESCENDING).stream() # Order by timestamp
+        # Order by timestamp in descending order (latest first)
+        docs = resumes_ref.order_by('timestamp', direction=firestore.Query.DESCENDING).stream() 
         
         all_resumes = []
         for doc in docs:
@@ -140,5 +130,5 @@ def delete_resume_data(resume_id):
         print(f"Firestore Error: Failed to delete resume with ID {resume_id}: {e}")
         raise
 
-# No direct init_db() call here, as Firebase initialization happens on import
+# No explicit init_db() call here, as Firebase initialization happens on import
 # The `db` client is ready to be used by `app.py`

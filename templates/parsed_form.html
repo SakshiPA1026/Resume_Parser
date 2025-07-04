@@ -219,6 +219,15 @@
             if (experienceCount === 0 && document.querySelectorAll('#experience-container .experience-item').length === 0) {
                 addExperience();
             }
+            // Populate textareas with content from data.work_experience
+            {% if data.work_experience %}
+                {% for exp in data.work_experience %}
+                    const textarea = document.querySelector(`textarea[name="work_experience_{{ loop.index0 }}_description"]`);
+                    if (textarea) {
+                        textarea.value = `{{ exp.description | e }}`; // |e for escaping HTML entities
+                    }
+                {% endfor %}
+            {% endif %}
         });
 
         function addEducation() {

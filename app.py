@@ -1,8 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 from werkzeug.utils import secure_filename
-# ADDED: Import the json module
-import json
+import json # Import the json module
 from parser import extract_text_from_pdf, extract_text_from_docx, parse_resume
 # Import database functions (now using Firestore)
 from database import insert_resume_data, get_all_resumes, delete_resume_data, get_resume_by_id 
@@ -322,7 +321,8 @@ def generate_pdf_from_data(data, buffer):
                 # Split description into lines and add as bullet points
                 desc_lines = [line.strip() for line in exp['description'].split('\n') if line.strip()]
                 for desc_line in desc_lines:
-                    story.append(Paragraph(desc_line, styles['Bullet']))
+                    bullet_para = document.add_paragraph(style='List Bullet')
+                    bullet_para.add_run(desc_line).font.size = Pt(10)
             story.append(Spacer(1, 0.05 * inch))
         story.append(Spacer(1, 0.1 * inch))
 
