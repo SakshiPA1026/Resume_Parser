@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, s
 from werkzeug.utils import secure_filename
 # ADDED: Import the json module
 import json
-from parser import extract_text_from_pdf, extract_text_from_docx, parse_resume
+from parser import extract_text_from_pdf, extract_text_from_docx, parse_resume_text
 # Import database functions (now using Firestore)
 from database import insert_resume_data, get_all_resumes, delete_resume_data, get_resume_by_id 
 import uuid # Import uuid for unique filenames
@@ -81,13 +81,15 @@ def parse():
             elif original_filename.endswith('.docx'):
                 extracted_text = extract_text_from_docx(filepath)
 
+
             if not extracted_text:
                 print(f"ERROR: Could not extract text from {unique_filename}. File might be empty or corrupted.") # Debugging print
                 return jsonify({'error': 'Could not extract text from the document. The file might be empty or corrupted.'}), 500
 
             print(f"DEBUG: Extracted text length from {unique_filename}: {len(extracted_text)} characters.") # Debugging print
-
-            parsed_data = parse_resume(extracted_text)
+            parsed_data = parse_resume_text(extracted_text)
+            print(parsed_data)
+            
             
             # Store the original filename in the parsed_data dictionary
             parsed_data['original_filename'] = original_filename

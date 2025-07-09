@@ -3,6 +3,8 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "resume-parser-917f8-firebase-adminsdk-fbsvc-4ab4960cfc.json"
+
 # --- Firestore Initialization ---
 # For local development:
 # Ensure you have a service account key file.
