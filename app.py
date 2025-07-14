@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, s
 from werkzeug.utils import secure_filename
 # ADDED: Import the json module
 import json
-from parser import extract_text_from_pdf, extract_text_from_docx, parse_resume_text
+from resume_parser import extract_text_from_pdf, extract_text_from_docx, parse_resume_text
 # Import database functions (now using Firestore)
 from database import insert_resume_data, get_all_resumes, delete_resume_data, get_resume_by_id 
 import uuid # Import uuid for unique filenames
@@ -406,4 +406,6 @@ def generate_docx_from_data(data, buffer):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)

@@ -12,7 +12,7 @@ catalogue==2.0.10
 certifi==2025.6.15
 cffi==1.17.1
 charset-normalizer==3.4.2
-click==8.2.1
+click==8.1.7
 cloudpathlib==0.16.0
 colorama==0.4.6
 confection==0.1.5
@@ -38,6 +38,7 @@ googleapis-common-protos==1.70.0
 greenlet==3.2.3
 grpcio==1.73.1
 grpcio-status==1.71.2
+gunicorn
 gunicorn==22.0.0
 h11==0.16.0
 h2==4.2.0
